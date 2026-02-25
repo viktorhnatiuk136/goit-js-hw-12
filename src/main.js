@@ -6,7 +6,6 @@ import {
   hideLoader,
   showLoadMoreButton,
   hideLoadMoreButton,
-  smoothScroll,
 } from './js/render-functions';
 
 import iziToast from 'izitoast';
@@ -53,9 +52,16 @@ form.addEventListener('submit', async event => {
       });
     } else {
       createGallery(response.hits);
-      smoothScroll();
+
       if (currentPage < totalPages) {
         showLoadMoreButton();
+      } else {
+        iziToast.info({
+          message:
+            'We are sorry, but you have reached the end of search results.',
+          timeout: 1000,
+          position: 'topRight',
+        });
       }
     }
   } catch {
@@ -73,6 +79,7 @@ form.addEventListener('submit', async event => {
 
 loadMoreBtn.addEventListener('click', async () => {
   try {
+    hideLoadMoreButton();
     showLoader();
     currentPage += 1;
 
@@ -80,10 +87,10 @@ loadMoreBtn.addEventListener('click', async () => {
     createGallery(newImages.hits);
     smoothScroll();
 
-    if (currentPage >= totalPages) {
-      hideLoadMoreButton();
-      iziToast.error({
-        title: 'Error',
+    if (currentPage < totalPages) {
+      showLoadMoreButton();
+    } else {
+      iziToast.info({
         message:
           'We are sorry, but you have reached the end of search results.',
         timeout: 1000,
@@ -102,3 +109,15 @@ loadMoreBtn.addEventListener('click', async () => {
     hideLoader();
   }
 });
+
+function smoothScroll() {
+  const galleryItem = document.querySelector('.gallery-item');
+  if (!galleryItem) return;
+
+  const pictureHeight = galleryItem.getBoundingClientRect().height;
+
+  window.scrollBy({
+    top: pictureHeight * 2,
+    behavior: 'smooth',
+  });
+}

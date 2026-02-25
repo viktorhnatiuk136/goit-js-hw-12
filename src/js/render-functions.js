@@ -64,15 +64,3 @@ export function showLoadMoreButton() {
 export function hideLoadMoreButton() {
   btnLoadMore.classList.add('btn-hidden');
 }
-
-export function smoothScroll() {
-  const galleryItem = document.querySelector('.gallery-item');
-  if (!galleryItem) return;
-
-  const pictureHeight = galleryItem.getBoundingClientRect().height;
-
-  window.scrollBy({
-    top: pictureHeight * 2,
-    behavior: 'smooth',
-  });
-}
